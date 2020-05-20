@@ -16,21 +16,25 @@ class MainActivity : AppCompatActivity() {
     private var bluetoothAdapter: BluetoothAdapter? = null
     private var popupMenu: PopupMenu? = null
 
+    private fun tryTurnOnBlueTooth() {
+        if (this.bluetoothAdapter != null) {
+            if (!this.bluetoothAdapter!!.isEnabled) {
+                // support bluetooth
+                Log.i("BLUETOOTH", "Support Bluetooth")
+                // request to enable bluetooth
+                Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE).also { intent ->
+                    Log.i("BLUETOOTH", "Enabled Bluetooth")
+                    startActivityForResult(intent, REQUEST_ENABLE_BT)
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         this.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        if (this.bluetoothAdapter != null) {
-            // support bluetooth
-            Log.i("BLUETOOTH", "Support Bluetooth")
-            if (!this.bluetoothAdapter!!.isEnabled) {
-                // request to enable bluetooth
-                Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE).also { intent ->
-                    startActivityForResult(intent, REQUEST_ENABLE_BT)
-                }
-            }
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -52,10 +56,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onMainButtonClick(view: View) {
+        this.tryTurnOnBlueTooth()
+
         val popupMenu: PopupMenu =
             if (this.popupMenu == null) PopupMenu(this, view) else this.popupMenu as PopupMenu
         if (this.popupMenu == null) {
-            popupMenu.inflate(R.menu.popup_selector_menu)
             this.bluetoothAdapter?.bondedDevices?.forEach { device ->
                 val deviceName = device.name
                 val deviceHardwareAddress = device.address  // Mac address

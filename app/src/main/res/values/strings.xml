@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RaspberryPiConnector</string>
+    <string name="mainPageButton">Connect</string>
 </resources>
